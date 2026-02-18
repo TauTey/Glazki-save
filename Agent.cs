@@ -48,8 +48,8 @@ namespace Козин_Глазки_save
                 foreach (ProductSale productSale in ProductSale)
                 {
                     TimeSpan differenceWithoutTime = DateTime.Today.Date - productSale.SaleDate.Date;
-
-                    sales += productSale.ProductCount;
+                    if ((int)differenceWithoutTime.TotalDays <= 365)
+                        sales += productSale.ProductCount;
                 }
                 return sales;
             }
