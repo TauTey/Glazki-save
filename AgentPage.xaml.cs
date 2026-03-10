@@ -28,9 +28,8 @@ namespace Козин_Глазки_save
 
             ComboSorting.SelectedIndex = 0;
             ComboType.SelectedIndex = 0;
-
-            LoadData();
             UpdateAgents();
+            LoadData();
         }
 
         private void UpdateAgents()
