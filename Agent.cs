@@ -85,7 +85,7 @@ namespace Козин_Глазки_save
         {
             get
             {
-                if (Discount >= 10)
+                if (Discount >= 25)
                     return "LightGreen";
                 else
                     return "White";

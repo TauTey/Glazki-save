@@ -29,11 +29,13 @@ namespace Козин_Глазки_save
             ComboSorting.SelectedIndex = 0;
             ComboType.SelectedIndex = 0;
 
+            LoadData();
             UpdateAgents();
         }
 
         private void UpdateAgents()
         {
+            LoadData();
             var context = KozinEntities.GetContext();
             var currentAgents = context.Agent.ToList();
 
@@ -83,7 +85,62 @@ namespace Козин_Глазки_save
             }
             AgentListView.ItemsSource = currentAgents;
         }
+        int _currentPage = 1;
+        int _maxPage = 0;
+        int _pageSize = 10;
+        List<Agent> _allAgents;
 
+        // Метод загрузки данных (добавить в класс)
+        void LoadData()
+        {
+            _allAgents = KozinEntities.GetContext().Agent.ToList();
+            _maxPage = (int)Math.Ceiling(_allAgents.Count / (double)_pageSize);
+            UpdatePage();
+        }
+
+        // Метод обновления страницы (добавить в класс)
+        void UpdatePage()
+        {
+            // Показываем текущую страницу
+            int skip = (_currentPage - 1) * _pageSize;
+            AgentListView.ItemsSource = _allAgents.Skip(skip).Take(_pageSize).ToList();
+
+            // Создаем кнопки страниц
+            PageButtonsPanel.Children.Clear();
+            for (int i = 1; i <= _maxPage; i++)
+            {
+                Button btn = new Button() { Content = i, Width = 30, Margin = new Thickness(3) };
+                if (i == _currentPage)
+                    btn.Background = Brushes.LightBlue;
+                int pageNum = i;
+                btn.Click += (s, e) => { _currentPage = pageNum; UpdatePage(); };
+
+                PageButtonsPanel.Children.Add(btn);
+            }
+
+            // Вкл/выкл кнопки навигации
+            PrevButton.IsEnabled = _currentPage > 1;
+            NextButton.IsEnabled = _currentPage < _maxPage;
+        }
+
+        // Обработчики кнопок (добавить в класс)
+        private void PrevButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentPage > 1)
+            {
+                _currentPage--;
+                UpdatePage();
+            }
+        }
+
+        private void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentPage < _maxPage)
+            {
+                _currentPage++;
+                UpdatePage();
+            }
+        }
         private void TBoxSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
             UpdateAgents();
